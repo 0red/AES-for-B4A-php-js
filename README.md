@@ -2,7 +2,7 @@
 
 
 #B4A
-```
+```basic
 
 Sub AES_Test1(text As String)
 	If text="" Then text="ąśćńłóę i to było by TO"
@@ -51,8 +51,8 @@ Sub AES_Encrypt(input As String, pass As String, IV As String) As String
 
 	Dim inputB() As Byte = input.GetBytes("UTF8")
 	Dim passB() As Byte = pass.GetBytes("UTF8")
-	If IV="" Or IV.Length<>16 Then IV=GenerateIV(IV)
 	Dim IVb() As Byte = IV.GetBytes("UTF8")
+	If IV="" Or IV.Length<>16 Then IVb=GenerateIVByted(IV)
 	Dim compress As CompressedStreams
  
 	Dim kg As KeyGenerator
@@ -88,11 +88,7 @@ Sub AES_Decrypt(input As String, pass As String, IV As String) As String
 
 	Dim su As StringUtils
 	Dim ver() As Byte=Array As Byte(0)
-	'If IV="" Then 
-'		IV=input.SubString2(0,16)
-'		input=input.SubString(16)
-'	End If
-	
+
 	
 	Dim inputB() As Byte = su.DecodeBase64(input)
 	Dim passB() As Byte = pass.GetBytes("UTF8")
@@ -128,6 +124,30 @@ Sub AES_Decrypt(input As String, pass As String, IV As String) As String
  		datas=compress.DecompressBytes(datas,"zlib")	
 	End If
 	Return BytesToString(datas, 0, datas.Length, "UTF8")
+End Sub
 
+Sub GenerateIV (s As String) As String
+	Dim PWC As String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	Dim IV As String
+	For i=0 To s.Length-1
+		IV=IV & s.CharAt(i)
+	Next
+	
+	For i=s.Length To 15
+		IV=IV & PWC.CharAt(Rnd(0,PWC.Length))
+	Next
+	Return IV
+End Sub
+
+Sub GenerateIVByte (s As String) As Byte()
+	Dim IV(16) As Byte
+	For i=0 To s.Length-1
+		IV(i)=Asc(s.CharAt(i))
+	Next
+	
+	For i=s.Length To 15
+		IV(i)=Rnd(0,256)
+	Next
+	Return IV
 End Sub
 ```
